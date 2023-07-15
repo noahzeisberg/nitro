@@ -40,3 +40,19 @@ while True:
         cmd = input(Fore.LIGHTBLACK_EX + "\\\\" + Fore.GREEN + "scorpion" + Fore.LIGHTBLACK_EX + " >>> " + Fore.RESET)
     except KeyboardInterrupt:
         sys.exit(0)
+
+    match cmd:
+        case "install":
+            print()
+
+        case "exit":
+            sys.exit(0)
+
+        case "clear":
+            os.system("cls")
+
+        case "restart" | "rs":
+            os.system("start " + path + "\\main.py")
+            sys.exit(0)
+        case _:
+            print(prefix("ERROR") + "Unknown command.")
