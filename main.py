@@ -2,12 +2,10 @@ import asyncio
 import os
 import shutil
 import sys
-import threading
-import time
+from pathlib import Path
 
 import requests
 from colorama import Fore, Back, init
-from requests_futures.sessions import FuturesSession
 
 init(convert=True)
 
@@ -48,6 +46,19 @@ def valid_args(count: int):
         return True
 
 
+def additional_args(count: int):
+    if len(args) < count:
+        return False
+    else:
+        return True
+
+
+def check_package(pkg: str):
+    if not pkg.__contains__("/"):
+        global package
+        package = "NoahOnFyre/" + pkg
+
+
 def menu():
     print(Fore.GREEN + """   _____                       _           
   / ___/_________  _________  (_)___  ____ 
@@ -72,33 +83,58 @@ while True:
     except KeyboardInterrupt:
         sys.exit(0)
 
-    match cmd:
-        case "install":
-            if valid_args(1):
-                package = args[0]
-                user = package.split("/")[0]
-                repository = package.split("/")[1]
-                output_path = path + "\\" + user + "_" + repository
-                os.makedirs(output_path)
-                content = requests.get("https://api.github.com/repos/" + package + "/contents").json()
-                asyncio.run(start(content))
+    try:
+        match cmd:
+            case "install" | "get" | "add":
+                if valid_args(1):
+                    package = args[0]
+                    check_package(package)
+                    user = package.split("/")[0]
+                    repository = package.split("/")[1]
+                    if additional_args(2):
+                        if args[1] == "-g":
+                            output_path = str(Path.home()) + "\\" + user + "_" + repository
+                        else:
+                            print(prefix("WARN") + "Not recognized flag!")
+                            continue
+                    else:
+                        output_path = path + "\\" + user + "_" + repository
+                    os.makedirs(output_path)
+                    content = requests.get("https://api.github.com/repos/" + package + "/contents").json()
+                    asyncio.run(start(content))
 
-        case "uninstall" | "remove":
-            if valid_args(1):
-                package = args[0]
-                user = package.split("/")[0]
-                repository = package.split("/")[1]
-                shutil.rmtree(path + "\\" + user + "_" + repository)
+            case "update":
+                if valid_args(1):
+                    package = args[0]
+                    check_package(package)
+                    user = package.split("/")[0]
+                    repository = package.split("/")[1]
+                    output_path = path + "\\" + user + "_" + repository
+                    shutil.rmtree(output_path)
+                    os.makedirs(output_path)
+                    content = requests.get("https://api.github.com/repos/" + package + "/contents").json()
+                    asyncio.run(start(content))
 
-        case "exit":
-            sys.exit(0)
+            case "uninstall" | "remove":
+                if valid_args(1):
+                    package = args[0]
+                    check_package(package)
+                    user = package.split("/")[0]
+                    repository = package.split("/")[1]
+                    shutil.rmtree(path + "\\" + user + "_" + repository)
 
-        case "clear" | "rl":
-            os.system("cls")
-            menu()
+            case "exit":
+                sys.exit(0)
 
-        case "restart" | "rs":
-            os.system("start " + path + "\\main.py")
-            sys.exit(0)
-        case _:
-            print(prefix("ERROR") + "Unknown command.")
+            case "clear" | "rl":
+                os.system("cls")
+                menu()
+
+            case "restart" | "rs":
+                os.system("start " + path + "\\main.py")
+                sys.exit(0)
+            case _:
+                print(prefix("ERROR") + "Unknown command.")
+    except Exception as e:
+        print(prefix("ERROR") + str(e))
+        continue
