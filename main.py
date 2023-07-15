@@ -109,7 +109,14 @@ while True:
                     check_package(package)
                     user = package.split("/")[0]
                     repository = package.split("/")[1]
-                    output_path = path + "\\" + user + "_" + repository
+                    if additional_args(2):
+                        if args[1] == "-g":
+                            output_path = str(Path.home()) + "\\" + user + "_" + repository
+                        else:
+                            print(prefix("WARN") + "Not recognized flag!")
+                            continue
+                    else:
+                        output_path = path + "\\" + user + "_" + repository
                     shutil.rmtree(output_path)
                     os.makedirs(output_path)
                     content = requests.get("https://api.github.com/repos/" + package + "/contents").json()
@@ -121,7 +128,15 @@ while True:
                     check_package(package)
                     user = package.split("/")[0]
                     repository = package.split("/")[1]
-                    shutil.rmtree(path + "\\" + user + "_" + repository)
+                    if additional_args(2):
+                        if args[1] == "-g":
+                            target_path = str(Path.home()) + "\\" + user + "_" + repository
+                        else:
+                            print(prefix("WARN") + "Not recognized flag!")
+                            continue
+                    else:
+                        target_path = path + "\\" + user + "_" + repository
+                    shutil.rmtree(target_path)
 
             case "exit":
                 sys.exit(0)
