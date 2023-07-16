@@ -162,4 +162,3 @@ while True:
     except KeyboardInterrupt:
         sys.exit(0)
     init(cmd=cmd, args=args)
-
