@@ -10,7 +10,7 @@ Scorpion uses the [GitHub API](https://api.github.com) to fetch information abou
 ## How do I install it?
 [Download the repository contents](https://github.com/NoahOnFyre/Scorpion/archive/refs/heads/master.zip) and extract the archive. Make sure you have [Python](https://python.org) installed. Open up a command prompt window in your current directory and run:
 ```
-pip install -r requirements.txt & copy %cd%\scorp.py %userprofile% & C: & cd %userprofile%
+setup.bat
 ```
 This should install all the dependencies you need, will copy the main file to your user directory and execute some post-install steps, so you can instantly start using the tool.
 
