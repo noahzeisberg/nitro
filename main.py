@@ -14,7 +14,7 @@ def fetch(dataset):
     if dataset["type"] != "file":
         return
     content = requests.get(dataset["download_url"]).content
-    with open(output_path + "\\" + dataset["name"], mode="wb") as file:
+    with open(target_path + "\\" + dataset["name"], mode="wb") as file:
         file.write(content)
     print(prefix() + "Fetched " + Fore.GREEN + dataset["name"] + Fore.RESET + f"!" + Fore.LIGHTBLACK_EX + " (" + str(dataset["size"]) + " Bytes)")
 
@@ -46,13 +46,6 @@ def valid_args(count: int):
         return True
 
 
-def additional_args(count: int):
-    if len(args) < count:
-        return False
-    else:
-        return True
-
-
 def check_package(pkg: str):
     if not pkg.__contains__("/"):
         global package
@@ -71,6 +64,23 @@ def menu():
 
 menu()
 path = os.path.dirname(os.path.abspath(sys.argv[0]))
+out_dir = str(Path.home()) + "\\.scorpion\\"
+
+if len(sys.argv) > 1:
+    script = sys.argv[1]
+    os.system("title Scorpion - Running: " + script)
+    print()
+    print(Fore.LIGHTBLACK_EX + "\\\\" + Fore.GREEN + "scorpion" + Fore.LIGHTBLACK_EX + " >>> " + Fore.RESET + "run " + script)
+    print()
+    if os.path.exists(out_dir + script):
+        with open(out_dir + script + "\\main.py", "rb") as file:
+            exec(file.read())
+    else:
+        os.system(script)
+    sys.exit()
+
+if not os.path.exists(out_dir):
+    os.makedirs(out_dir)
 
 while True:
     try:
@@ -90,17 +100,19 @@ while True:
                     check_package(package)
                     user = package.split("/")[0]
                     repository = package.split("/")[1]
-                    if additional_args(2):
-                        if args[1] == "-g":
-                            output_path = str(Path.home()) + "\\" + user + "_" + repository
-                        else:
-                            print(prefix("WARN") + "Not recognized flag!")
-                            continue
-                    else:
-                        output_path = path + "\\" + user + "_" + repository
-                    os.makedirs(output_path)
+                    target_path = out_dir + "\\" + repository
+                    os.makedirs(target_path)
                     content = requests.get("https://api.github.com/repos/" + package + "/contents").json()
                     asyncio.run(start(content))
+
+            case "run":
+                if valid_args(1):
+                    script = args[0]
+                    if os.path.exists(out_dir + script):
+                        with open(out_dir + script + "\\main.py", "rb") as file:
+                            exec(file.read())
+                    else:
+                        os.system(script)
 
             case "update":
                 if valid_args(1):
@@ -108,16 +120,9 @@ while True:
                     check_package(package)
                     user = package.split("/")[0]
                     repository = package.split("/")[1]
-                    if additional_args(2):
-                        if args[1] == "-g":
-                            output_path = str(Path.home()) + "\\" + user + "_" + repository
-                        else:
-                            print(prefix("WARN") + "Not recognized flag!")
-                            continue
-                    else:
-                        output_path = path + "\\" + user + "_" + repository
-                    shutil.rmtree(output_path)
-                    os.makedirs(output_path)
+                    target_path = out_dir + "\\" + repository
+                    shutil.rmtree(target_path)
+                    os.makedirs(target_path)
                     content = requests.get("https://api.github.com/repos/" + package + "/contents").json()
                     asyncio.run(start(content))
 
@@ -127,14 +132,7 @@ while True:
                     check_package(package)
                     user = package.split("/")[0]
                     repository = package.split("/")[1]
-                    if additional_args(2):
-                        if args[1] == "-g":
-                            target_path = str(Path.home()) + "\\" + user + "_" + repository
-                        else:
-                            print(prefix("WARN") + "Not recognized flag!")
-                            continue
-                    else:
-                        target_path = path + "\\" + user + "_" + repository
+                    target_path = out_dir + "\\" + repository
                     shutil.rmtree(target_path)
 
             case "exit":
