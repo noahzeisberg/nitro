@@ -12,7 +12,7 @@ Scorpion uses the [GitHub API](https://api.github.com) to fetch information abou
 ```
 pip install -r requirements.txt & copy %cd%\scorp.py %userprofile% & C: & cd %userprofile%
 ```
-This should install all the dependencies you need and will copy the main file to your user directory.
+This should install all the dependencies you need, will copy the main file to your user directory and execute some post-install steps, so you can instantly start using the tool.
 
 ## How do I use it?
 Info: You can use Scorpion from the command prompt, or as standalone CLI.
