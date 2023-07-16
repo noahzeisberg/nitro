@@ -143,7 +143,7 @@ while True:
                 menu()
 
             case "restart" | "rs":
-                os.system("start " + path + "\\main.py")
+                os.system("start " + path + "\\scorp.py")
                 sys.exit(0)
             case _:
                 print(prefix("ERROR") + "Unknown command.")
