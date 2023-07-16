@@ -13,4 +13,5 @@ echo Setup finished!
 
 C:
 cd %userprofile%
+scorp clear
 scorp help
