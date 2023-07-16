@@ -60,14 +60,13 @@ def check_package(pkg: str):
 
 
 def menu():
+    os.system("title Scorpion - Async Package Manager")
     print(Fore.GREEN + """   _____                       _           
   / ___/_________  _________  (_)___  ____ 
   \__ \/ ___/ __ \/ ___/ __ \/ / __ \/ __ \\
  ___/ / /__/ /_/ / /  / /_/ / / /_/ / / / /
 /____/\___/\____/_/  / .___/_/\____/_/ /_/ 
                     /_/                                    """)
-    print()
-    print(Fore.GREEN + "SCORPION CLI " + Fore.LIGHTBLACK_EX + "-" + Fore.GREEN + " ASYNC GITHUB-BASED PACKAGE MANAGER")
 
 
 menu()
