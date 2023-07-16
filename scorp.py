@@ -175,7 +175,7 @@ menu()
 while True:
     try:
         print()
-        args = input(Fore.LIGHTBLACK_EX + "\\\\" + Fore.GREEN + "scorpion" + Fore.LIGHTBLACK_EX + " >>> " + Fore.RESET).split(" ")
+        args = input(Fore.LIGHTBLACK_EX + "\\\\" + Fore.GREEN + "scorpion" + Fore.LIGHTBLACK_EX + " >>> " + Fore.RESET + "scorp ").split(" ")
         print()
         cmd = args[0]
         args.remove(cmd)
