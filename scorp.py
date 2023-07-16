@@ -39,6 +39,12 @@ def prefix(level: str = "INFO"):
     return level_color + " " + level + " " + Back.RESET + Fore.RESET + " "
 
 
+def print_help_entry(command_name: str, description: str):
+    first = Fore.GREEN + command_name.upper() + Fore.LIGHTBLACK_EX + ":" + Fore.RESET + " "*(12-len(command_name))
+    second = Fore.WHITE + description.replace("(", Fore.LIGHTBLACK_EX + "(").replace(")", ")" + Fore.RESET)
+    print(prefix() + first + second)
+
+
 def valid_args(count: int):
     if len(args) < count:
         print(prefix("ERROR") + "Invalid arguments!")
@@ -52,7 +58,7 @@ def init(cmd, args):
     global target_path
     try:
         match cmd:
-            case "install" | "get" | "add":
+            case "install" | "get":
                 if valid_args(1):
                     package = args[0]
                     check_package(package)
@@ -66,9 +72,6 @@ def init(cmd, args):
             case "list":
                 for file in os.listdir(out_dir):
                     print(prefix() + Fore.GREEN + file.removeprefix(out_dir))
-
-            case "dir":
-                os.system("start explorer.exe " + out_dir)
 
             case "run":
                 if valid_args(1):
@@ -100,8 +103,21 @@ def init(cmd, args):
                     shutil.rmtree(target_path)
                     print(prefix() + "Successfully removed package!")
 
-            case "exit":
-                sys.exit(0)
+            case "help":
+                print_help_entry("scorp", "Start the standalone CLI.")
+                print_help_entry("get", "Fetch a package and save it to local storage.")
+                print_help_entry("list", "List all installed packages.")
+                print_help_entry("run", "Run a package. (only python supported)")
+                print_help_entry("update", "Re-fetch a package and save it to local storage.")
+                print_help_entry("remove", "Remove a package from local storage.")
+                print_help_entry("help", "Get help about the commands.")
+                print_help_entry("dir", "Open the location of your packages.")
+                print_help_entry("clear", "Clear the terminal.")
+                print_help_entry("restart", "Restart the application. (CLI only)")
+                print_help_entry("exit", "Exit the application. (CLI only)")
+
+            case "dir":
+                os.system("start explorer.exe " + out_dir)
 
             case "clear" | "rl":
                 os.system("cls")
@@ -110,6 +126,10 @@ def init(cmd, args):
             case "restart" | "rs":
                 os.system("start " + path + "\\scorp.py")
                 sys.exit(0)
+
+            case "exit":
+                sys.exit(0)
+
             case _:
                 if os.path.exists(out_dir + "\\" + cmd):
                     subprocess.call("python " + out_dir + "\\" + cmd + "\\main.py")
