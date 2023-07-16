@@ -10,24 +10,18 @@ Scorpion uses the [GitHub API](https://api.github.com) to fetch information abou
 ## How do I install it?
 [Download the repository contents](https://github.com/NoahOnFyre/Scorpion/archive/refs/heads/master.zip) and extract the archive. Make sure you have [Python](https://python.org) installed. Open up a command prompt window in your current directory and run:
 ```
-pip install -r requirements.txt
+pip install -r requirements.txt & copy %cd%\scorp.py %userprofile%
 ```
-This should install all the dependencies you need. Then, start Scorpion by double-clicking on the file.
+This should install all the dependencies you need and will copy the main file to your user directory.
 
 ## How do I use it?
+You can use Scorpion from the command prompt, so open up a window using the `cmd` command.
+
 If you want to install the package "Eltotiz/StreamHunter" you can go ahead and run:
 ```
-get eltotiz/streamhunter
-```
-If you want to install a package globally, add the "-g" flag to it. For example:
-```
-get eltotiz/streamhunter -g
+scorp get eltotiz/streamhunter
 ```
 If you want to install a repo created by me, you can just enter the repository name instead of the whole name. For example:
 ```
-get scorpion
-```
-This works with the "global" flag too:
-```
-get scorpion -g
+scorp get scorpion
 ```
