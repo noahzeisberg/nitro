@@ -4,8 +4,10 @@ import os
 import shutil
 import subprocess
 import sys
+import time
 from pathlib import Path
 
+import packaging.version
 import requests
 from colorama import Fore, Back, init
 
@@ -138,7 +140,6 @@ def init(cmd, args):
                 os.system("start explorer.exe " + out_dir)
 
             case "clear" | "rl":
-                os.system("cls")
                 menu()
 
             case "restart" | "rs":
@@ -146,6 +147,7 @@ def init(cmd, args):
                 sys.exit(0)
 
             case "exit":
+                os.system("cls")
                 sys.exit(0)
 
             case _:
@@ -165,17 +167,21 @@ def check_package(pkg: str):
 
 
 def menu():
+    os.system("cls")
     os.system("title Nitro - Async Package Manager")
-    print(Fore.GREEN + """    _   ___ __                            
-   / | / (_) /__________  ____ ____  ____ 
-  /  |/ / / __/ ___/ __ \/ __ `/ _ \/ __ \\
- / /|  / / /_/ /  / /_/ / /_/ /  __/ / / /
-/_/ |_/_/\__/_/   \____/\__, /\___/_/ /_/ 
-                       /____/             """)
+    print(Fore.GREEN + "     _   __ _  __")
+    print(Fore.GREEN + "    / | / /(_)/ /_ _____ ____")
+    print(Fore.GREEN + "   /  |/ // // __// ___// __ \\" + " "*3 + Fore.LIGHTBLACK_EX + "Packages: " + Fore.GREEN + str(len(os.listdir(out_dir))) + " package" + Fore.LIGHTBLACK_EX + "(s)" + Fore.GREEN + ".")
+    print(Fore.GREEN + "  / /|  // // /_ / /   / /_/ /" + " "*3 + Fore.LIGHTBLACK_EX + "Version: " + Fore.GREEN + version.replace(".", Fore.LIGHTBLACK_EX + "." + Fore.GREEN))
+    print(Fore.GREEN + " /_/ |_//_/ \\__//_/    \\____/")
 
 
 path = os.path.dirname(os.path.abspath(sys.argv[0]))
+version = "1.0.0"
 out_dir = str(Path.home()) + "\\.nitro"
+
+if not os.path.exists(out_dir):
+    os.makedirs(out_dir)
 
 if len(sys.argv) > 1:
     args = sys.argv
@@ -185,9 +191,6 @@ if len(sys.argv) > 1:
     print()
     init(cmd=cmd, args=args)
     sys.exit(0)
-
-if not os.path.exists(out_dir):
-    os.makedirs(out_dir)
 
 menu()
 while True:
