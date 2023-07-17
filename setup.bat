@@ -11,7 +11,7 @@ copy %cd%\scorp.py %userprofile%
 title Setup finished!
 echo Setup finished!
 
-C:
-cd %userprofile%
-scorp clear
-scorp help
+cd /d %userprofile%
+
+nitro clear
+nitro help
