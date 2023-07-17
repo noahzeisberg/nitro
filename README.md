@@ -25,3 +25,6 @@ If you want to install a repo created by me, you can just enter the repository n
 ```
 nitro get fyutils
 ```
+
+# Updating installation
+You can easily update your installation by downloading the newest version and running the `setup` command.
