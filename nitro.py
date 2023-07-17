@@ -1,4 +1,5 @@
 import asyncio
+import json
 import os
 import shutil
 import subprocess
@@ -68,6 +69,23 @@ def init(cmd, args):
                     os.makedirs(target_path)
                     content = requests.get("https://api.github.com/repos/" + package + "/contents").json()
                     asyncio.run(start(content))
+                    print(prefix() + "Verifying collected artifacts...")
+                    artifacts = os.listdir(target_path)
+                    for a in artifacts:
+                        a.removeprefix(target_path)
+                    if not artifacts.__contains__("main.py"):
+                        print(prefix("ERROR") + "No main file found!")
+                        main_file = input(prefix("INFO") + "Enter name of main file: ")
+                    else:
+                        main_file = "main.py"
+                    print(prefix() + "Creating manifest...")
+
+                    with open(target_path + "\\manifest.nitro", "x") as file:
+                        file.write(json.dumps({
+                            "repository": package,
+                            "path": target_path,
+                            "main": main_file
+                        }, indent=4))
 
             case "list":
                 for file in os.listdir(out_dir):
@@ -104,7 +122,7 @@ def init(cmd, args):
                     print(prefix() + "Successfully removed package!")
 
             case "help":
-                print_help_entry("scorp", "Start the standalone CLI.")
+                print_help_entry("nitro", "Start the standalone CLI.")
                 print_help_entry("get", "Fetch a package and save it to local storage.")
                 print_help_entry("list", "List all installed packages.")
                 print_help_entry("run", "Run a package. (only python supported)")
@@ -124,7 +142,7 @@ def init(cmd, args):
                 menu()
 
             case "restart" | "rs":
-                os.system("start " + path + "\\scorp.py")
+                os.system("start " + path + "\\nitro.py")
                 sys.exit(0)
 
             case "exit":
@@ -147,17 +165,17 @@ def check_package(pkg: str):
 
 
 def menu():
-    os.system("title Scorpion - Async Package Manager")
-    print(Fore.GREEN + """   _____                       _           
-  / ___/_________  _________  (_)___  ____ 
-  \__ \/ ___/ __ \/ ___/ __ \/ / __ \/ __ \\
- ___/ / /__/ /_/ / /  / /_/ / / /_/ / / / /
-/____/\___/\____/_/  / .___/_/\____/_/ /_/ 
-                    /_/                                    """)
+    os.system("title Nitro - Async Package Manager")
+    print(Fore.GREEN + """    _   ___ __                            
+   / | / (_) /__________  ____ ____  ____ 
+  /  |/ / / __/ ___/ __ \/ __ `/ _ \/ __ \\
+ / /|  / / /_/ /  / /_/ / /_/ /  __/ / / /
+/_/ |_/_/\__/_/   \____/\__, /\___/_/ /_/ 
+                       /____/             """)
 
 
 path = os.path.dirname(os.path.abspath(sys.argv[0]))
-out_dir = str(Path.home()) + "\\.scorpion"
+out_dir = str(Path.home()) + "\\.nitro"
 
 if len(sys.argv) > 1:
     args = sys.argv
@@ -175,7 +193,7 @@ menu()
 while True:
     try:
         print()
-        args = input(Fore.LIGHTBLACK_EX + "\\\\" + Fore.GREEN + "scorpion" + Fore.LIGHTBLACK_EX + " >>> " + Fore.RESET + "scorp ").split(" ")
+        args = input(Fore.LIGHTBLACK_EX + "\\\\" + Fore.GREEN + "nitro" + Fore.LIGHTBLACK_EX + " ~ " + Fore.RESET + "nitro ").split(" ")
         print()
         cmd = args[0]
         args.remove(cmd)
