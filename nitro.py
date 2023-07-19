@@ -149,10 +149,7 @@ async def handle_command(cmd, args):
                 sys.exit(0)
 
             case _:
-                if os.path.exists(out_dir + "\\" + cmd + "\\"):
-                    subprocess.call("python " + out_dir + "\\" + cmd + "\\main.py")
-                else:
-                    print(prefix("ERROR") + "Command not found.")
+                print(prefix("ERROR") + "Command not found.")
 
     except Exception as e:
         print(prefix("ERROR") + str(e))
