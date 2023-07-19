@@ -59,7 +59,7 @@ async def handle_command(cmd, args):
             case "install" | "get":
                 if valid_args(args, 1):
                     package = args[0].lower()
-                    check_package(package)
+                    package = check_package(package)
                     user = package.split("/")[0]
                     repository = package.split("/")[1]
                     target_path = out_dir + "\\" + repository
@@ -87,9 +87,9 @@ async def handle_command(cmd, args):
 
                         with open(target_path + "\\manifest.nitro", "x") as file:
                             file.write(json.dumps({
-                                "repository": package,
-                                "author": user,
-                                "path": target_path
+                                "package": package,
+                                "manifest_version": 1,
+                                "main": "main.py"
                             }, indent=4))
                     print(prefix() + "Successfully collected package " + Fore.GREEN + package + Fore.RESET + "!")
 
@@ -114,7 +114,7 @@ async def handle_command(cmd, args):
             case "uninstall" | "remove":
                 if valid_args(args, 1):
                     package = args[0].lower()
-                    check_package(package)
+                    package = check_package(package)
                     user = package.split("/")[0]
                     repository = package.split("/")[1]
                     target_path = out_dir + "\\" + repository
@@ -157,8 +157,9 @@ async def handle_command(cmd, args):
 
 def check_package(pkg: str):
     if not pkg.__contains__("/"):
-        global package
-        package = "noahonfyre/" + pkg
+        return "noahonfyre/" + pkg
+    else:
+        return pkg
 
 
 def menu():
