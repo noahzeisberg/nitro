@@ -19,9 +19,13 @@ Info: You can use Nitro from the command prompt, or as standalone CLI.
 
 If you want to install the package "Eltotiz/StreamHunter" you can go ahead and run:
 ```
-nitro get eltotiz/streamhunter
+get eltotiz/streamhunter
 ```
 If you want to install a repo created by me, you can just enter the repository name instead of the whole name. For example:
+```
+get fyutils
+```
+If you're using the application via your command prompt, you'll have to add the `nitro` prefix to every command.
 ```
 nitro get fyutils
 ```
