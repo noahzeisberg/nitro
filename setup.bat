@@ -14,5 +14,4 @@ echo Setup finished!
 cd /d %userprofile%
 echo Preparing for first use...
 
-nitro clear
-nitro help
+nitro
