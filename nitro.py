@@ -99,11 +99,12 @@ async def handle_command(cmd, args):
 
                     with open(target_path + "\\manifest.nitro", "rt") as file:
                         manifest = json.load(file)
+                        main_file = manifest["main"]
 
                     print(prefix() + "Creating shortcut...")
                     shell = Dispatch("WScript.Shell")
                     shortcut = shell.CreateShortCut(shortcut_location + "\\" + repository + "_nitro.lnk")
-                    shortcut.Targetpath = target_path + "\\main.py"
+                    shortcut.Targetpath = target_path + "\\" + main_file
                     shortcut.WorkingDirectory = target_path
                     shortcut.save()
                     print(prefix() + "Successfully collected package " + Fore.GREEN + package + Fore.RESET + "!")
