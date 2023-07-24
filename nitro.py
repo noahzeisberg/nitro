@@ -175,7 +175,7 @@ async def handle_command(cmd, args):
 
 
 def check_package(pkg: str):
-    if not pkg.__contains__("/"):
+    if "/" not in pkg:
         return "noahonfyre/" + pkg
     else:
         return pkg
