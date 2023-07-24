@@ -10,6 +10,7 @@ import platform
 import packaging.version as version_parser
 import requests
 import requests_futures.sessions
+from win32com.client import Dispatch
 from colorama import Fore, Back, init
 
 init(convert=True)
@@ -63,7 +64,11 @@ async def handle_command(cmd, args):
                     user = package.split("/")[0]
                     repository = package.split("/")[1]
                     target_path = out_dir + "\\" + repository
+                    if os.path.exists(target_path):
+                        print(prefix("ERROR") + "This package already exists! Check for any forks installed.")
+                        return
                     os.makedirs(target_path)
+                    info = requests.get("https://api.github.com/repos/" + package).json()
                     content = requests.get("https://api.github.com/repos/" + package + "/contents").json()
                     print(prefix() + "Fetching content of " + Fore.GREEN + package + Fore.RESET + "...")
                     tasks = []
@@ -71,26 +76,36 @@ async def handle_command(cmd, args):
                         tasks.append(asyncio.to_thread(fetch, entry))
                     await asyncio.gather(*tasks)
                     print(prefix() + "All artifacts collected!")
-                    print(prefix() + "Verifying...")
+                    print(prefix() + "Verifying package...")
                     artifacts = os.listdir(target_path)
                     includes_manifest = False
                     for artifact in artifacts:
                         artifact.removeprefix(target_path)
                         if artifact == "manifest.nitro":
-                            print(prefix() + "Found project manifests!")
                             includes_manifest = True
 
                     if includes_manifest:
-                        print(prefix() + "Using project manifests.")
+                        print(prefix() + "Package includes custom manifests.")
                     else:
+                        print(prefix("WARN") + "Package doesn't includes a manifest file!")
                         print(prefix() + "Creating manifest...")
 
                         with open(target_path + "\\manifest.nitro", "x") as file:
                             file.write(json.dumps({
-                                "package": package,
+                                "package": info["full_name"],
                                 "manifest_version": 1,
                                 "main": "main.py"
                             }, indent=4))
+
+                    with open(target_path + "\\manifest.nitro", "rt") as file:
+                        manifest = json.load(file)
+
+                    print(prefix() + "Creating shortcut...")
+                    shell = Dispatch("WScript.Shell")
+                    shortcut = shell.CreateShortCut(shortcut_location + "\\" + repository + "_nitro.lnk")
+                    shortcut.Targetpath = target_path + "\\main.py"
+                    shortcut.WorkingDirectory = target_path
+                    shortcut.save()
                     print(prefix() + "Successfully collected package " + Fore.GREEN + package + Fore.RESET + "!")
 
             case "list":
@@ -118,7 +133,11 @@ async def handle_command(cmd, args):
                     user = package.split("/")[0]
                     repository = package.split("/")[1]
                     target_path = out_dir + "\\" + repository
+                    print(prefix() + "Removing files...")
                     await asyncio.to_thread(lambda: shutil.rmtree(target_path))
+                    if os.path.exists(shortcut_location + "\\" + repository + "_nitro.lnk"):
+                        print(prefix() + "Removing shortcut...")
+                        os.remove(shortcut_location + "\\" + repository + "_nitro.lnk")
                     print(prefix() + "Successfully removed package!")
 
             case "help":
@@ -199,6 +218,7 @@ async def main():
 
 
 path = os.path.dirname(os.path.abspath(sys.argv[0]))
+shortcut_location = str(Path.home()) + "\\Desktop"
 version = "1.0.0"
 out_dir = str(Path.home()) + "\\.nitro"
 
