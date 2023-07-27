@@ -63,7 +63,7 @@ async def handle_command(cmd, args):
                     package = check_package(package)
                     user = package.split("/")[0]
                     repository = package.split("/")[1]
-                    target_path = out_dir + "\\" + repository
+                    target_path = package_dir + repository
                     if os.path.exists(target_path):
                         print(prefix("ERROR") + "This package already exists! Check for any forks installed.")
                         return
@@ -81,7 +81,7 @@ async def handle_command(cmd, args):
                     includes_manifest = False
                     for artifact in artifacts:
                         artifact.removeprefix(target_path)
-                        if artifact == "manifest.nitro":
+                        if artifact == "manifest.npkg":
                             includes_manifest = True
 
                     if includes_manifest:
@@ -90,14 +90,14 @@ async def handle_command(cmd, args):
                         print(prefix("WARN") + "Package doesn't includes a manifest file!")
                         print(prefix() + "Creating manifest...")
 
-                        with open(target_path + "\\manifest.nitro", "x") as file:
+                        with open(target_path + "\\manifest.npkg", "x") as file:
                             file.write(json.dumps({
                                 "package": info["full_name"],
                                 "manifest_version": 1,
                                 "main": "main.py"
                             }, indent=4))
 
-                    with open(target_path + "\\manifest.nitro", "rt") as file:
+                    with open(target_path + "\\manifest.npkg", "rt") as file:
                         manifest = json.load(file)
                         main_file = manifest["main"]
 
@@ -110,14 +110,14 @@ async def handle_command(cmd, args):
                     print(prefix() + "Successfully collected package " + Fore.GREEN + package + Fore.RESET + "!")
 
             case "list":
-                for file in os.listdir(out_dir):
-                    print(prefix() + Fore.GREEN + file.removeprefix(out_dir))
+                for file in os.listdir(package_dir):
+                    print(prefix() + Fore.GREEN + file.removeprefix(package_dir))
 
             case "run":
                 if valid_args(args, 1):
                     script = args[0]
-                    if os.path.exists(out_dir + "\\" + script):
-                        subprocess.call("python " + out_dir + "\\" + script + "\\main.py")
+                    if os.path.exists(package_dir + script):
+                        subprocess.call("python " + package_dir + script + "\\main.py")
                     else:
                         os.system(script)
 
@@ -133,12 +133,12 @@ async def handle_command(cmd, args):
                     package = check_package(package)
                     user = package.split("/")[0]
                     repository = package.split("/")[1]
-                    target_path = out_dir + "\\" + repository
+                    target_path = package_dir + repository
                     print(prefix() + "Removing files...")
                     await asyncio.to_thread(lambda: shutil.rmtree(target_path))
-                    if os.path.exists(shortcut_location + "\\" + repository + "_nitro.lnk"):
+                    if os.path.exists(shortcut_location + "\\" + repository + ".nitro.lnk"):
                         print(prefix() + "Removing shortcut...")
-                        os.remove(shortcut_location + "\\" + repository + "_nitro.lnk")
+                        os.remove(shortcut_location + "\\" + repository + ".nitro.lnk")
                     print(prefix() + "Successfully removed package!")
 
             case "help":
@@ -155,7 +155,7 @@ async def handle_command(cmd, args):
                 print_help_entry("exit", "Exit the application. (CLI only)")
 
             case "dir":
-                os.system("start explorer.exe " + out_dir)
+                os.system("start explorer.exe " + package_dir)
 
             case "clear" | "rl":
                 menu()
@@ -187,14 +187,22 @@ def menu():
     os.system("title Nitro - Async Package Manager")
     print(Fore.GREEN + "     _   __ _  __")
     print(Fore.GREEN + "    / | / /(_)/ /_ _____ ____" + " "*4 + Fore.LIGHTBLACK_EX + "Python: " + Fore.GREEN + platform.python_version())
-    print(Fore.GREEN + "   /  |/ // // __// ___// __ \\" + " "*3 + Fore.LIGHTBLACK_EX + "Packages: " + Fore.GREEN + str(len(os.listdir(out_dir))) + " package" + Fore.LIGHTBLACK_EX + "(s)" + Fore.GREEN + ".")
+    print(Fore.GREEN + "   /  |/ // // __// ___// __ \\" + " "*3 + Fore.LIGHTBLACK_EX + "Packages: " + Fore.GREEN + str(len(os.listdir(package_dir))) + " package" + Fore.LIGHTBLACK_EX + "(s)" + Fore.GREEN + ".")
     print(Fore.GREEN + "  / /|  // // /_ / /   / /_/ /" + " "*3 + Fore.LIGHTBLACK_EX + "Version: " + Fore.GREEN + version.replace(".", Fore.LIGHTBLACK_EX + "." + Fore.GREEN))
     print(Fore.GREEN + " /_/ |_//_/ \\__//_/    \\____/" + " "*4 + Fore.LIGHTBLACK_EX + "Made by: " + Fore.GREEN + "NoahOnFyre")
 
 
 async def main():
-    if not os.path.exists(out_dir):
-        os.makedirs(out_dir)
+    if not os.path.exists(package_dir):
+        os.makedirs(package_dir)
+
+    if not os.path.exists(shortcut_location + "Nitro.lnk"):
+        print(prefix() + "Creating shortcut...")
+        shell = Dispatch("WScript.Shell")
+        shortcut = shell.CreateShortCut(shortcut_location + "\\" + "Nitro.lnk")
+        shortcut.Targetpath = path + "\\" + "nitro.py"
+        shortcut.WorkingDirectory = path
+        shortcut.save()
 
     if len(sys.argv) > 1:
         args = sys.argv
@@ -209,7 +217,7 @@ async def main():
     while True:
         try:
             print()
-            args = input(Fore.LIGHTBLACK_EX + "\\\\" + Fore.GREEN + "nitro" + Fore.LIGHTBLACK_EX + " ~ " + Fore.RESET + "nitro ").split(" ")
+            args = input(Fore.LIGHTBLACK_EX + "\\\\" + Fore.GREEN + "nitro" + Fore.LIGHTBLACK_EX + " ~ " + Fore.RESET).split(" ")
             print()
             cmd = args[0]
             args.remove(cmd)
@@ -221,6 +229,7 @@ async def main():
 path = os.path.dirname(os.path.abspath(sys.argv[0]))
 shortcut_location = str(Path.home()) + "\\Desktop"
 version = "1.0.0"
-out_dir = str(Path.home()) + "\\.nitro"
+nitro_dir = str(Path.home()) + "\\.nitro\\"
+package_dir = nitro_dir + "packages\\"
 
 asyncio.run(main())
