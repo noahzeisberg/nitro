@@ -17,9 +17,9 @@ This should install all the dependencies you need, will copy the main file to yo
 ## How do I use it?
 Info: You can use Nitro from the command prompt, or as standalone CLI.
 
-If you want to install the package "Eltotiz/StreamHunter" you can go ahead and run:
+If you want to install the package "NoahOnFyre/FyUTILS" you can go ahead and run:
 ```
-get eltotiz/streamhunter
+get noahonfyre/fyutils
 ```
 If you want to install a repo created by me, you can just enter the repository name instead of the whole name. For example:
 ```
