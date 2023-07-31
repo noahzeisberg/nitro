@@ -29,7 +29,7 @@ jobs:
       run: GOOS=darwin GOARCH=amd64 go build -v ./...
 
     - name: Build Android
-      run: GOOS=android GOARCH=amd64 go build -v ./...
+      run: CGO_ENABLED=0 GOOS=android GOARCH=amd64 go build -v ./...
     
     - name: Test
       run: go test -v ./...
@@ -58,4 +58,4 @@ jobs:
       with:
         release_name: ${{ steps.previoustag.outputs.patch }}
         tag_name: ${{ steps.previoustag.outputs.patch }}
-        asset_files: './*.*'
+        asset_files: './Nitro.exe ./Nitro.dmg'
