@@ -50,7 +50,7 @@ jobs:
       run: ls
 
     - name: Use dist dir for publication
-      run: mkdir dist & mv Nitro.exe ./dist & mv Nitro.dmg ./dist
+      run: mkdir dist & mv Nitro.exe ./dist
 
     - name: Release
       id: ReleaseMinor
