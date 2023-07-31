@@ -55,7 +55,6 @@ jobs:
     - name: Release
       id: ReleaseMinor
       uses: Hs1r1us/Release-AIO@v2.0.0
-      if: contains(github.event.head_commit.message, '(release)')
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
