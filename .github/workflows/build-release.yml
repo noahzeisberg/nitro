@@ -6,6 +6,7 @@ on:
 
 jobs:
   build-release:
+    permissions: write-all
     runs-on: ubuntu-latest
     steps:
 
@@ -54,5 +55,5 @@ jobs:
       with:
         release_name: ${{ steps.previoustag.outputs.patch }}
         tag_name: "v1.0.0"
-        asset_files: './Nitro.exe'
+        asset_files: './*.*'
         
