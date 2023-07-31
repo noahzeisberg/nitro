@@ -45,6 +45,9 @@ jobs:
       uses: "WyriHaximus/github-action-next-semvers@v1"
       with:
         version: ${{ steps.previoustag.outputs.tag }}
+      
+    - name: Debug files
+      run: ls
 
     - name: Release
       id: ReleaseMinor
@@ -54,6 +57,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         release_name: ${{ steps.previoustag.outputs.patch }}
-        tag_name: "v1.0.0"
+        tag_name: ${{ steps.previoustag.outputs.patch }}
         asset_files: './*.*'
         
