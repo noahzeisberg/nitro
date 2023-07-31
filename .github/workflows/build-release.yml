@@ -49,6 +49,9 @@ jobs:
     - name: Debug files
       run: ls
 
+    - name: Use dist dir for publication
+      run: mkdir dist & mv Nitro.exe ./dist & mv Nitro.dmg ./dist
+
     - name: Release
       id: ReleaseMinor
       uses: Hs1r1us/Release-AIO@v2.0.0
@@ -58,4 +61,4 @@ jobs:
       with:
         release_name: Release v${{ steps.nextminor.outputs.patch }}
         tag_name: ${{ steps.nextminor.outputs.patch }}
-        asset_files: './Nitro.exe'
+        asset_files: "./dist"
