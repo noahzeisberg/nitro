@@ -19,20 +19,23 @@ jobs:
       with:
         go-version: '1.20'
 
+    - name: Init dist directory
+      run: mkdir dist
+
     - name: Build Linux
-      run: GOOS=linux GOARCH=amd64 go build -v ./...
+      run: GOOS=linux GOARCH=amd64 go build -v ./dist
 
     - name: Build Windows
-      run: GOOS=windows GOARCH=amd64 go build -v ./...
+      run: GOOS=windows GOARCH=amd64 go build -v ./dist
 
     - name: Build macOS
-      run: GOOS=darwin GOARCH=amd64 go build -v ./...
+      run: GOOS=darwin GOARCH=amd64 go build -v ./dist
 
     - name: Build Android
-      run: CGO_ENABLED=0 GOOS=android GOARCH=amd64 go build -v ./...
+      run: GOOS=android GOARCH=amd64 go build -v ./dist
     
     - name: Test
-      run: go test -v ./...
+      run: go test -v ./dist
 
     - name: 'Get Previous tag'
       id: previoustag
@@ -49,15 +52,13 @@ jobs:
     - name: Debug files
       run: ls
 
-    - name: Use dist dir for publication
-      run: mkdir dist & mv Nitro.exe ./dist
-
     - name: Release
       id: ReleaseMinor
       uses: Hs1r1us/Release-AIO@v2.0.0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
+        body: "Release description."
         release_name: Release v${{ steps.nextminor.outputs.patch }}
         tag_name: ${{ steps.nextminor.outputs.patch }}
         asset_files: "./dist"
