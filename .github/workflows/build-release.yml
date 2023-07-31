@@ -23,19 +23,19 @@ jobs:
       run: mkdir dist
 
     - name: Build Linux
-      run: GOOS=linux GOARCH=amd64 go build -v ./dist
+      run: GOOS=linux GOARCH=amd64 go build -v -o dist/Nitro ./...
 
     - name: Build Windows
-      run: GOOS=windows GOARCH=amd64 go build -v ./dist
+      run: GOOS=windows GOARCH=amd64 go build -v -o dist/Nitro ./...
 
     - name: Build macOS
-      run: GOOS=darwin GOARCH=amd64 go build -v ./dist
+      run: GOOS=darwin GOARCH=amd64 go build -v -o dist/Nitro ./...
 
     - name: Build Android
-      run: GOOS=android GOARCH=amd64 go build -v ./dist
+      run: GOOS=android GOARCH=amd64 go build -v -o dist/Nitro ./...
     
     - name: Test
-      run: go test -v ./dist
+      run: go test -v ./...
 
     - name: 'Get Previous tag'
       id: previoustag
@@ -59,6 +59,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         body: "Release description."
-        release_name: Release v${{ steps.nextminor.outputs.patch }}
+        release_name: Nitro - Release v${{ steps.nextminor.outputs.patch }}
         tag_name: ${{ steps.nextminor.outputs.patch }}
         asset_files: "./dist"
