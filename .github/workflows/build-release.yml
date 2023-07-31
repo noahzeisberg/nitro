@@ -56,6 +56,6 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        release_name: ${{ steps.previoustag.outputs.patch }}
-        tag_name: ${{ steps.previoustag.outputs.patch }}
+        release_name: ${{ steps.nextminor.outputs.patch }}
+        tag_name: ${{ steps.nextminor.outputs.patch }}
         asset_files: './Nitro.exe ./Nitro.dmg'
