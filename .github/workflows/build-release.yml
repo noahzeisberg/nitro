@@ -45,12 +45,6 @@ jobs:
       with:
         version: ${{ steps.previoustag.outputs.tag }}
 
-    - name: 'Get next patch version'
-      id: nextpatch
-      uses: "WyriHaximus/github-action-next-semvers@v1"
-      with:
-        version: ${{ steps.previoustag.outputs.patch }}
-
     - name: Release
       id: ReleaseMinor
       uses: Hs1r1us/Release-AIO@v2.0.0
