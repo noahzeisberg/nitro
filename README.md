@@ -32,3 +32,12 @@ nitro get fyutils
 
 # Updating installation
 You can easily update your installation by downloading the newest version and running the `setup` command.
+
+# Supported platforms
+
+| Platform | Tested             |
+|----------|--------------------|
+| Windows  | :white_check_mark: |
+| Linux    | :x:                |
+| macOS    | :x:                |
+| Android  | :x:                |
