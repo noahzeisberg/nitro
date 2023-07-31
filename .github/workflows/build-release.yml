@@ -59,4 +59,3 @@ jobs:
         release_name: ${{ steps.previoustag.outputs.patch }}
         tag_name: ${{ steps.previoustag.outputs.patch }}
         asset_files: './*.*'
-        
