@@ -3,31 +3,42 @@ package main
 import (
 	"bufio"
 	"os"
-	"strings"
 
 	"github.com/TwiN/go-color"
 )
 
+//////////////////////
+// Global variables //
+//////////////////////
+
+var (
+	scanner     = bufio.NewScanner(os.Stdin)
+	command     string
+	args        []string
+	commandList []CommandProperties
+)
+
+///////////////////
+// Main function //
+///////////////////
+
 func main() {
-	scanner := bufio.NewScanner(os.Stdin)
+	initCommands()
 
 	print(color.Green + "     _   __ _  __")
 	print(color.Green + "    / | / /(_)/ /_ _____ ____ ")
-	print(color.Green + "   /  |/ // // __// ___// __ \\" + color.Gray + "   Version: " + color.Green + "1.0.0")
-	print(color.Green + "  / /|  // // /_ / /   / /_/ /" + color.Gray + "   Packages: " + color.Green + "")
-	print(color.Green + " /_/ |_//_/ \\__//_/    \\____/ " + color.Gray + "   Made by: " + color.Green + "NoahOnFyre")
+	print(color.Green + "   /  |/ // // __// ___// __ \\" + GRAY + "   Version: " + color.Green + "1.0.0")
+	print(color.Green + "  / /|  // // /_ / /   / /_/ /" + GRAY + "   Packages: " + color.Green + "")
+	print(color.Green + " /_/ |_//_/ \\__//_/    \\____/ " + GRAY + "   Made by: " + color.Green + "NoahOnFyre")
 	print("")
 	for {
-		printR(color.Gray + "\\\\" + color.Green + "nitro" + color.Gray + " ~ ")
-		scanner.Scan()
+		command, args = commandInput(*scanner)
 
-		userInput := strings.Split(scanner.Text(), " ")
-		command := userInput[0]
-		// args := removeElement(userInput, 0)
-
-		switch command {
-		case "exit":
-			os.Exit(0)
+		for i, props := range commandList {
+			if props.name == command {
+				props.function()
+			}
+			i = i
 		}
 	}
 }

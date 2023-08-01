@@ -6,11 +6,11 @@ import (
 	"github.com/TwiN/go-color"
 )
 
-func print(msg string) {
+func print(msg any) {
 	fmt.Println(msg)
 }
 
-func printR(msg string) {
+func printR(msg any) {
 	fmt.Print(msg)
 }
 
