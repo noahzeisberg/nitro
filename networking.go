@@ -14,5 +14,5 @@ func apiRequest(path string) {
 }
 
 func getRepoContents() {
-	 apiRequest("/repos/NoahOnFyre/FyUTILS/contents").Json()
+	 apiRequest("/repos/NoahOnFyre/FyUTILS/contents").
 }

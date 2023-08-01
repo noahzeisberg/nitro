@@ -31,6 +31,7 @@ func main() {
 	print(color.Green + "  / /|  // // /_ / /   / /_/ /" + GRAY + "   Packages: " + color.Green + "")
 	print(color.Green + " /_/ |_//_/ \\__//_/    \\____/ " + GRAY + "   Made by: " + color.Green + "NoahOnFyre")
 	print("")
+	
 	for {
 		command, args = commandInput(*scanner)
 
