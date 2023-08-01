@@ -1,6 +1,9 @@
 # Nitro
 Nitro is a fast, request-based and asynchronous package manager based on GitHub repositories.
 
+# Important Note
+This README will soon be replaced by another.
+
 ![ghpages](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/documentation/ghpages_vector.svg)
 ![discord-singular](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/social/discord-singular_vector.svg)
 
