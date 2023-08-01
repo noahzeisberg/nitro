@@ -3,7 +3,7 @@ Nitro is a asyncronous CLI tool that fetches packages based on GitHub repositori
 It's currently only tested on Windows, so we can't ensure any features to work on other systems.
 
 # How do I install it?
-Download the `Nitro-windows-amd64.exe` and the `setup.bat` file out of the (latest Release)[https://github.com/NoahOnFyre/Nitro/]. Open up a command prompt in your current directory and execute the following command.
+Download the `Nitro-windows-amd64.exe` and the `setup.bat` file out of the [latest Release](https://github.com/NoahOnFyre/Nitro/). Open up a command prompt in your current directory and execute the following command.
 ```
 setup
 ```
