@@ -15,7 +15,8 @@ var (
 	scanner     = bufio.NewScanner(os.Stdin)
 	commandList []CommandProperties
 
-	nitro_dir   string = single(os.UserHomeDir()) + "\\.nitro"
+	user_dir    string = single(os.UserHomeDir())
+	nitro_dir   string = user_dir + "\\.nitro"
 	core_dir    string = nitro_dir + "\\core"
 	package_dir string = nitro_dir + "\\packages"
 	temp_dir    string = nitro_dir + "\\temp"

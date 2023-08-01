@@ -1,6 +1,7 @@
 package main
 
 import (
+	"os"
 	"strings"
 
 	"github.com/TwiN/go-color"
@@ -18,9 +19,9 @@ func input(msg string) string {
 
 func single(object string, err error) string {
 	if err != nil {
-		return object
+		print(prefix(2) + err.Error())
+		os.Exit(1)
 	}
-	print(prefix(2) + err.Error())
 	return object
 }
 

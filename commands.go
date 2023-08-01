@@ -28,8 +28,9 @@ func registerCommand(commandName string, description string, args int, run func(
 }
 
 func initCommands() {
-	registerCommand("help", "Show this help menu", 0, help)
-	registerCommand("exit", "Exit the application", 0, exit)
+	registerCommand("help", "Show this help menu.", 0, help)
+	registerCommand("exit", "Exit the application.", 0, exit)
+	registerCommand("test", "Test command used for debugging and testing.", 0, test)
 }
 
 ///////////////////////
@@ -44,4 +45,8 @@ func help() {
 
 func exit() {
 	os.Exit(0)
+}
+
+func test() {
+	fetchRepo("NoahOnFyre/FyUTILS")
 }

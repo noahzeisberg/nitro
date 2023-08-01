@@ -16,3 +16,6 @@ _testmain.go
 *.exe
 *.test
 *.prof
+
+build.bat
+test.bat
