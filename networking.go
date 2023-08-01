@@ -1,18 +1,38 @@
 package main
 
 import (
+	"encoding/json"
+	"io"
 	"net/http"
 )
 
-func apiRequest(path string) {
-	result, err := http.Get("https://api.github.com" + path)
+func getContent(url string) string {
+	res, err := http.Get(url)
 	if err != nil {
-		error("GitHub API request failed!")
-		os.Exit(1)
+		print(prefix(2) + "HTTP request failed: No response of host.")
+		return ""
 	}
-	return result
+	defer res.Body.Close()
+
+	if res.StatusCode != 200 {
+		print(prefix(2) + "HTTP request failed: Invalid status.")
+		return ""
+	}
+
+	content, err := io.ReadAll(res.Body)
+	if err != nil {
+		print(prefix(2) + "Reading body failed.")
+		return ""
+	}
+
+	return string(content)
+}
+
+func apiRequest(path string) http.Response {
+	json, _ := json.Marshal(requestGet("https://api.github.com" + path))
+
 }
 
 func getRepoContents() {
-	 apiRequest("/repos/NoahOnFyre/FyUTILS/contents").
+	apiRequest("/repos/NoahOnFyre/FyUTILS/contents")
 }

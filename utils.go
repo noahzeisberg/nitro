@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bufio"
 	"strings"
 
 	"github.com/TwiN/go-color"
@@ -11,16 +10,24 @@ func removeElement(slice []string, index int) []string {
 	return append(slice[:index], slice[index+1:]...)
 }
 
-func input(msg string, scanner bufio.Scanner) string {
+func input(msg string) string {
 	printR(msg)
 	scanner.Scan()
 	return scanner.Text()
 }
 
-func commandInput(scanner bufio.Scanner) (string, []string) {
+func single(object string, err error) string {
+	if err != nil {
+		return object
+	}
+	print(prefix(2) + err.Error())
+	return object
+}
+
+func commandInput() (string, []string) {
 	commandLine := GRAY + "\\\\" + color.Green + "nitro" + GRAY + " ~ " + color.Reset
 
-	userInput := input(commandLine, scanner)
+	userInput := input(commandLine)
 	splitted := strings.Split(userInput, " ")
 	command := splitted[0]
 	args := removeElement(splitted, 0)

@@ -15,15 +15,15 @@ type CommandProperties struct {
 	name        string
 	description string
 	args        int
-	function    func()
+	run         func()
 }
 
-func registerCommand(commandName string, description string, args int, function func()) {
+func registerCommand(commandName string, description string, args int, run func()) {
 	commandList = append(commandList, CommandProperties{
 		name:        commandName,
 		description: description,
 		args:        args,
-		function:    function,
+		run:         run,
 	})
 }
 
@@ -37,9 +37,8 @@ func initCommands() {
 ///////////////////////
 
 func help() {
-	for i, props := range commandList {
+	for _, props := range commandList {
 		print(prefix(0) + color.Green + strings.ToUpper(props.name) + GRAY + " - " + color.Reset + props.description)
-		i = i
 	}
 }
 
