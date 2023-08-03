@@ -5,4 +5,6 @@ github.com/google/go-github v17.0.0+incompatible h1:N0LgJ1j65A7kfXrZnUDaYCs/Sf4r
 github.com/google/go-github v17.0.0+incompatible/go.mod h1:zLgOLi98H3fifZn+44m+umXrS52loVEgC2AApnigrVQ=
 github.com/google/go-querystring v1.1.0 h1:AnCroh3fv4ZBgVIf1Iwtovgjaw/GiKJo8M8yD/fhyJ8=
 github.com/google/go-querystring v1.1.0/go.mod h1:Kcdr2DB4koayq7X8pmAG4sNG59So17icRSOU623lUBU=
+github.com/lxi1400/GoTitle v0.0.0-20210314075355-9d4645c96c0e h1:mZkCSpCORJaJl7F6Ifo8BzgOl7kZ9IausGEjDWIhfNw=
+github.com/lxi1400/GoTitle v0.0.0-20210314075355-9d4645c96c0e/go.mod h1:C1iqQcdWzAhada5bR2k+w8K9rXSUyIsw5sNmGozh97c=
 golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
