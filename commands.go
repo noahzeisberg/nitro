@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"os"
+	"os/exec"
 	"strconv"
 	"strings"
 
@@ -34,6 +35,7 @@ func initCommands() {
 	registerCommand("check", "Check things like your rate limit, internet connection, etc.", 1, check)
 	registerCommand("remove", "Remove the data of a fetched repository.", 1, remove)
 	registerCommand("list", "List all packages installed.", 0, list)
+	registerCommand("dir", "Open the Nitro path.", 0, dir)
 	registerCommand("help", "Show this help menu.", 0, help)
 	registerCommand("exit", "Exit the application.", 0, exit)
 	registerCommand("clear", "Clear the terminal screen.", 0, clear)
@@ -135,4 +137,8 @@ func check() {
 
 func clear() {
 	menu()
+}
+
+func dir() {
+	exec.Command("explorer", nitro_dir)
 }
