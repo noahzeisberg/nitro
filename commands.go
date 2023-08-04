@@ -115,6 +115,7 @@ func check() {
 			core_dir,
 			package_dir,
 			temp_dir,
+			plugin_dir,
 		})
 		print(prefix(0) + "Checking configuration files...")
 		print(prefix(0) + "Checking Go installation...")
@@ -140,5 +141,5 @@ func clear() {
 }
 
 func dir() {
-	exec.Command("explorer", nitro_dir)
+	exec.Command("explorer", nitro_dir).Run()
 }
