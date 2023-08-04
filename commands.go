@@ -56,7 +56,7 @@ func exit() {
 func get() {
 	repo := args[0]
 	if !strings.Contains(repo, "/") {
-		repo := "NoahOnFyre/" + repo
+		repo := "noahonfyre/" + repo
 		fetchRepo(repo)
 	} else {
 		fetchRepo(repo)
@@ -77,7 +77,7 @@ func list() {
 			if err != nil {
 				print(prefix(2) + "The file information couldn't be read.")
 			}
-			print(prefix(0) + color.Green + strings.Replace(pkg.Name(), "-", "/", -1) + GRAY + " - " + color.Reset + strconv.Itoa(int(pkg_info.Size())) + " Bytes" + GRAY + " - " + color.Reset + pkg_info.ModTime().Format("15:04:05 - 02.01.2006"))
+			print(prefix(0) + color.Green + strings.Replace(pkg.Name(), ".", "/", -1) + GRAY + " - " + color.Reset + strconv.Itoa(int(pkg_info.Size())) + " Bytes" + GRAY + " - " + color.Reset + pkg_info.ModTime().Format("15:04:05 - 02.01.2006"))
 		}
 	}
 }
@@ -86,9 +86,9 @@ func remove() {
 	repo := args[0]
 	if !strings.Contains(repo, "/") {
 		repo := "NoahOnFyre/" + repo
-		os.RemoveAll(package_dir + "\\" + strings.Replace(repo, "/", "-", -1))
+		os.RemoveAll(package_dir + "\\" + strings.Replace(repo, "/", ".", -1))
 	} else {
-		os.RemoveAll(package_dir + "\\" + strings.Replace(repo, "/", "-", -1))
+		os.RemoveAll(package_dir + "\\" + strings.Replace(repo, "/", ".", -1))
 	}
 	print(prefix(0) + "Package successfully removed!")
 }
@@ -125,7 +125,7 @@ func check() {
 		if errors_found == 0 {
 			print(prefix(0) + "Done! " + color.Green + strconv.Itoa(errors_found) + color.Reset + " errors found and fixed!")
 		} else {
-			print(prefix(2) + "Done! " + color.Green + strconv.Itoa(errors_found) + color.Reset + " errors found and fixed!")
+			print(prefix(1) + "Done! " + color.Green + strconv.Itoa(errors_found) + color.Reset + " errors found and fixed!")
 		}
 
 	default:

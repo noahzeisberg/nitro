@@ -22,6 +22,7 @@ var (
 	core_dir    string = nitro_dir + "\\core"
 	package_dir string = nitro_dir + "\\packages"
 	temp_dir    string = nitro_dir + "\\temp"
+	plugin_dir  string = core_dir + "\\plugins"
 
 	command string
 	args    []string
@@ -41,7 +42,6 @@ func menu() {
 	print(color.Green + "   /  |/ // // __// ___// __ \\" + GRAY + "   Version: " + color.Green + "1.0.0")
 	print(color.Green + "  / /|  // // /_ / /   / /_/ /" + GRAY + "   Packages: " + color.Green + strconv.Itoa(len(dir_content)))
 	print(color.Green + " /_/ |_//_/ \\__//_/    \\____/ " + GRAY + "   Made by: " + color.Green + "NoahOnFyre")
-	print("")
 }
 
 ///////////////////
@@ -56,9 +56,11 @@ func main() {
 		core_dir,
 		package_dir,
 		temp_dir,
+		plugin_dir,
 	})
 
 	menu()
+	print("")
 
 	args = args
 

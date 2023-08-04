@@ -17,7 +17,7 @@ func printR(msg any) {
 func prefix(level int) string {
 	switch level {
 	case 0:
-		return color.GreenBackground + "" + color.Black + " INFO " + color.Reset + color.White + " "
+		return color.GreenBackground + "" + color.Black + " INFO " + color.Reset + color.Reset + " "
 	case 1:
 		return color.YellowBackground + color.Black + " WARN " + color.Reset + color.Yellow + " "
 	case 2:
