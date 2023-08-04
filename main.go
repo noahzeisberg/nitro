@@ -62,8 +62,6 @@ func main() {
 	menu()
 	print("")
 
-	args = args
-
 	for {
 		command, args = commandInput()
 		print("")
