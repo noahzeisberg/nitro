@@ -9,6 +9,9 @@ go install
 echo Building...
 go build
 
+echo Prepairing...
+ren Nitro-windows-amd64.exe Nitro.exe
+
 echo Copying files...
 copy %cd%\Nitro.exe %userprofile%
 

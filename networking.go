@@ -51,7 +51,7 @@ func fetchRepo(reponame string) {
 			res, err := http.Get(*props.DownloadURL)
 			if err != nil {
 				print(prefix(2) + "GET request failed: " + err.Error())
-				return
+				os.Exit(1)
 			}
 
 			defer res.Body.Close()
@@ -60,13 +60,13 @@ func fetchRepo(reponame string) {
 
 			if err != nil {
 				print(prefix(2) + "Reading body failed: " + err.Error())
-				return
+				os.Exit(1)
 			}
 
 			bytes_written, err := file.Write(body)
 			if err != nil {
 				print(prefix(2) + "Error while writing file: " + err.Error())
-				return
+				os.Exit(1)
 			}
 			print(prefix(0) + "Wrote " + color.Green + strconv.Itoa(bytes_written) + color.Reset + " bytes to " + GRAY + file.Name())
 			file.Close()
