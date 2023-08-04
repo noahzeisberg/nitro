@@ -1,21 +1,19 @@
 @echo off
 
-rem Install requirements.
-title Installing requirements...
-echo Installing requirements...
-pip install -r requirements.txt
-
-rem Copy data to user directory.
-title Installing Nitro...
+REM This script will install everything you'll need to build an use Nitro.
 echo Installing Nitro...
-copy %cd%\nitro.py %userprofile%
 
-title Setup finished!
-echo Setup finished!
+echo Installing Go dependencies...
+go install
 
-rem cd into user directory.
-cd /d %userprofile%
-echo Preparing for first use...
+echo Building...
+go build
 
-rem Start the CLI.
+echo Copying files...
+copy %cd%\Nitro.exe %userprofile%
+
+echo Prepairing start...
+cd %userprofile%
+
+echo Starting Nitro...
 nitro

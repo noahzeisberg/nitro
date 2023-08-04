@@ -1,0 +1,64 @@
+on:
+  push:
+    branches: ["3-migration-to-go"]
+  pull_request:
+    branches: ["3-migration-to-go"]
+
+jobs:
+  build-release:
+    permissions: write-all
+    runs-on: ubuntu-latest
+    steps:
+
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0 
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.20'
+
+    - name: Init dist directory
+      run: mkdir dist
+
+    - name: Build Linux
+      run: GOOS=linux GOARCH=amd64 go build -v -o dist/Nitro-linux-amd64.bin ./...
+
+    - name: Build Windows
+      run: GOOS=windows GOARCH=amd64 go build -v -o dist/Nitro-windows-amd64.exe ./...
+
+    - name: Build macOS
+      run: GOOS=darwin GOARCH=amd64 go build -v -o dist/Nitro-darwin-amd64.dmg ./...
+
+    - name: Build Android
+      run: GOOS=android GOARCH=amd64 go build -v -o dist/Nitro-android-amd64.apk ./...
+    
+    - name: Test
+      run: go test -v ./...
+
+    - name: 'Get Previous tag'
+      id: previoustag
+      uses: "WyriHaximus/github-action-get-previous-tag@v1"
+      with:
+        fallback: 1.0.0
+
+    - name: 'Get next minor version'
+      id: nextminor
+      uses: "WyriHaximus/github-action-next-semvers@v1"
+      with:
+        version: ${{ steps.previoustag.outputs.tag }}
+      
+    - name: Debug files
+      run: ls
+
+    - name: Release
+      id: Release
+      uses: Hs1r1us/Release-AIO@v2.0.0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        body: "Release description."
+        release_name: Release - Nitro v${{ steps.nextminor.outputs.patch }}
+        tag_name: ${{ steps.nextminor.outputs.patch }}
+        asset_files: "./dist"

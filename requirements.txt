@@ -1,5 +1,0 @@
-colorama==0.4.6
-packaging==23.1
-pywin32==306
-Requests==2.31.0
-requests_futures==1.0.1

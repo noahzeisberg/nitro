@@ -1,6 +1,0 @@
-{
-    "package": "NoahOnFyre/Nitro",
-    "manifest_version": 2,
-    "type": "package"
-    "main": "nitro.py"
-}
