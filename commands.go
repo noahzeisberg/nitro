@@ -144,6 +144,10 @@ func clear() {
 func run() {
 	manifest := getManifest(parseRepoName(args[0]))
 
+	if manifest.Build != "" {
+		exec.Command(manifest.Build).Run()
+	}
+
 	exec.Command("start", manifest.Main).Run()
 }
 
