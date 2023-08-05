@@ -19,12 +19,11 @@ var (
 )
 
 type Manifest struct {
-	Name        string `json:"name"`
-	Language    string `json:"language"`
-	Type        string `json:"type"`
-	Build       string `json:"build"`
-	BuildNeeded bool   `json:"build_needed"`
-	Main        string `json:"main"`
+	Name     string `json:"name"`
+	Language string `json:"language"`
+	Type     string `json:"type"`
+	Build    string `json:"build"`
+	Main     string `json:"main"`
 }
 
 func fetchRepo(reponame string) {
