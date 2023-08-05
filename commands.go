@@ -141,5 +141,5 @@ func clear() {
 }
 
 func dir() {
-	exec.Command("explorer", nitro_dir).Run()
+	exec.Command("start", "explorer.exe " + nitro_dir).Run()
 }

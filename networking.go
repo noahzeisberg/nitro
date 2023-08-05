@@ -74,4 +74,15 @@ func fetchRepo(reponame string) {
 		}(contentProps)
 	}
 	wg.Wait()
+
+	package_content, err := os.ReadDir(pkg_name)
+
+	if err != nil {
+		print(prefix(2) + "Reading directory failed! " + err.Error())
+		os.Exit(1)
+	}
+
+	for _, file := range package_content {
+		
+	}
 }
