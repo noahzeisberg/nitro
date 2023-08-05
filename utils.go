@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"os"
 	"strings"
 
@@ -33,4 +34,31 @@ func commandInput() (string, []string) {
 	command := splitted[0]
 	args := removeElement(splitted, 0)
 	return command, args
+}
+
+func getManifest(pkg string) Manifest {
+	file_content, err := os.ReadFile(package_dir + "\\" + pkg + "\\manifest.npkg")
+
+	if err != nil {
+		print(prefix(2) + "Reading manifest data failed! " + err.Error())
+		os.Exit(1)
+	}
+
+	var manifest Manifest
+
+	json.Unmarshal(file_content, &manifest)
+
+	return manifest
+}
+
+func parseRepoName(reponame string) string {
+	owner := strings.ToLower(strings.Split(reponame, "/")[0])
+	repo := strings.ToLower(strings.Split(reponame, "/")[1])
+	return owner + "." + repo
+}
+
+func parseLocalRepoName(reponame string) string {
+	owner := strings.ToLower(strings.Split(reponame, ".")[0])
+	repo := strings.ToLower(strings.Split(reponame, ".")[1])
+	return owner + "/" + repo
 }

@@ -1,0 +1,8 @@
+{
+    "name": "Nitro",
+    "language": "golang",
+    "type": "package",
+    "build": "go build -o Nitro-windows-amd64.exe -v",
+    "build_needed": true,
+    "main": "Nitro-windows-amd64.exe"
+}

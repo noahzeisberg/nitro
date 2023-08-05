@@ -18,11 +18,21 @@ var (
 	gitHubClient = github.NewClient(nil)
 )
 
+type Manifest struct {
+	Name        string `json:"name"`
+	Language    string `json:"language"`
+	Type        string `json:"type"`
+	Build       string `json:"build"`
+	BuildNeeded bool   `json:"build_needed"`
+	Main        string `json:"main"`
+}
+
 func fetchRepo(reponame string) {
 	owner := strings.ToLower(strings.Split(reponame, "/")[0])
 	repo := strings.ToLower(strings.Split(reponame, "/")[1])
-	pkg_name := package_dir + "\\" + owner + "." + repo + "\\"
-	if exists(pkg_name) {
+	pkg_name := owner + "." + repo
+	pkg_dir := package_dir + "\\" + owner + "." + repo + "\\"
+	if exists(pkg_dir) {
 		print(prefix(2) + "The package is already installed!")
 		return
 	}
@@ -33,7 +43,7 @@ func fetchRepo(reponame string) {
 		return
 	}
 
-	os.Mkdir(pkg_name, fs.ModeDir)
+	os.Mkdir(pkg_dir, fs.ModeDir)
 
 	var wg sync.WaitGroup
 	wg.Add(len(directoryContent))
@@ -44,7 +54,7 @@ func fetchRepo(reponame string) {
 				wg.Done()
 				return
 			}
-			file, _ := os.Create(pkg_name + *props.Name)
+			file, _ := os.Create(pkg_dir + *props.Name)
 
 			print(prefix(0) + "Fetching " + color.Green + *props.Name + color.Reset + "... " + GRAY + "(" + strconv.Itoa(props.GetSize()) + " Bytes" + ")" + GRAY + " - " + color.Green + response.Status)
 
@@ -75,14 +85,22 @@ func fetchRepo(reponame string) {
 	}
 	wg.Wait()
 
-	package_content, err := os.ReadDir(pkg_name)
+	package_content, err := os.ReadDir(pkg_dir)
 
 	if err != nil {
 		print(prefix(2) + "Reading directory failed! " + err.Error())
 		os.Exit(1)
 	}
 
+	contains_manifest := false
+
 	for _, file := range package_content {
-		
+		if file.Name() == "manifest.npkg" {
+			contains_manifest = true
+		}
+	}
+
+	if contains_manifest {
+		getManifest(pkg_name)
 	}
 }
