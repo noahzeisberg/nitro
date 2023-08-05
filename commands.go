@@ -32,6 +32,7 @@ func registerCommand(commandName string, description string, args int, run func(
 
 func initCommands() {
 	registerCommand("get", "Fetch all files in the specified repository.", 1, get)
+	registerCommand("run", "Run a package.", 1, run)
 	registerCommand("check", "Check things like your rate limit, internet connection, etc.", 1, check)
 	registerCommand("remove", "Remove the data of a fetched repository.", 1, remove)
 	registerCommand("list", "List all packages installed.", 0, list)
@@ -140,6 +141,12 @@ func clear() {
 	menu()
 }
 
+func run() {
+	manifest := getManifest(parseRepoName(args[0]))
+
+	exec.Command("start", manifest.Main).Run()
+}
+
 func dir() {
-	exec.Command("start", "explorer.exe " + nitro_dir).Run()
+	exec.Command("start", "explorer.exe "+nitro_dir).Run()
 }
