@@ -1,4 +1,4 @@
-module Nitro
+module github.com/NoahOnFyre/Nitro
 
 go 1.20
 
