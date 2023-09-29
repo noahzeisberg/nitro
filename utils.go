@@ -1,64 +1,32 @@
 package main
 
-import (
-	"encoding/json"
-	"os"
-	"strings"
+import "strings"
 
-	"github.com/TwiN/go-color"
-)
-
-func removeElement(slice []string, index int) []string {
-	return append(slice[:index], slice[index+1:]...)
+func SplitRepositoryID(name string) (string, string) {
+	split := strings.Split(name, "/")
+	return strings.ToLower(split[0]), strings.ToLower(split[1])
 }
 
-func input(msg string) string {
-	printR(msg)
-	scanner.Scan()
-	return scanner.Text()
-}
-
-func single(object string, err error) string {
-	if err != nil {
-		print(prefix(2) + err.Error())
-		os.Exit(1)
+func ParseRepository(name string) string {
+	if !strings.Contains(name, "/") {
+		return "noahonfyre/" + strings.ToLower(name)
+	} else {
+		return strings.ToLower(name)
 	}
-	return object
 }
 
-func commandInput() (string, []string) {
-	commandLine := GRAY + "\\\\" + color.Green + "nitro" + GRAY + " ~ " + color.Reset
-
-	userInput := input(commandLine)
-	splitted := strings.Split(userInput, " ")
-	command := splitted[0]
-	args := removeElement(splitted, 0)
-	return command, args
-}
-
-func getManifest(pkg string) Manifest {
-	file_content, err := os.ReadFile(package_dir + "\\" + pkg + "\\manifest.npkg")
-
-	if err != nil {
-		print(prefix(2) + "Reading manifest data failed! " + err.Error())
-		os.Exit(1)
+func ParsePackage(name string) string {
+	if !strings.Contains(name, ".") {
+		return "noahonfyre." + strings.ToLower(name)
+	} else {
+		return strings.ToLower(name)
 	}
-
-	var manifest Manifest
-
-	json.Unmarshal(file_content, &manifest)
-
-	return manifest
 }
 
-func parseRepoName(reponame string) string {
-	owner := strings.ToLower(strings.Split(reponame, "/")[0])
-	repo := strings.ToLower(strings.Split(reponame, "/")[1])
-	return owner + "." + repo
+func ToPackageName(name string) string {
+	return strings.ReplaceAll(strings.ToLower(name), "/", ".")
 }
 
-func parseLocalRepoName(reponame string) string {
-	owner := strings.ToLower(strings.Split(reponame, ".")[0])
-	repo := strings.ToLower(strings.Split(reponame, ".")[1])
-	return owner + "/" + repo
+func ToRepositoryName(name string) string {
+	return strings.ReplaceAll(strings.ToLower(name), ".", "/")
 }

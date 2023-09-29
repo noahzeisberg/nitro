@@ -2,155 +2,142 @@ package main
 
 import (
 	"context"
+	"github.com/NoahOnFyre/gengine/color"
+	"github.com/NoahOnFyre/gengine/filesystem"
+	"github.com/NoahOnFyre/gengine/logging"
+	"github.com/google/go-github/github"
+	"io"
+	"net/http"
 	"os"
-	"os/exec"
 	"strconv"
 	"strings"
-
-	"github.com/TwiN/go-color"
+	"sync"
 )
 
-///////////////////////
-// Command utilities //
-///////////////////////
-
-type CommandProperties struct {
-	name        string
-	description string
-	args        int
-	run         func()
-}
-
-func registerCommand(commandName string, description string, args int, run func()) {
-	commandList = append(commandList, CommandProperties{
-		name:        commandName,
-		description: description,
-		args:        args,
-		run:         run,
+func RegisterCommand(name string, description string, args []string, runnable func([]string)) {
+	arguments := Args{
+		Count: len(args),
+		Get:   args,
+	}
+	commands = append(commands, Command{
+		Name:        name,
+		Description: description,
+		Args:        arguments,
+		Run:         runnable,
 	})
 }
 
-func initCommands() {
-	registerCommand("get", "Fetch all files in the specified repository.", 1, get)
-	registerCommand("run", "Run a package.", 1, run)
-	registerCommand("check", "Check things like your rate limit, internet connection, etc.", 1, check)
-	registerCommand("remove", "Remove the data of a fetched repository.", 1, remove)
-	registerCommand("list", "List all packages installed.", 0, list)
-	registerCommand("dir", "Open the Nitro path.", 0, dir)
-	registerCommand("help", "Show this help menu.", 0, help)
-	registerCommand("exit", "Exit the application.", 0, exit)
-	registerCommand("clear", "Clear the terminal screen.", 0, clear)
-}
+func GetCommand(args []string) {
+	repository := ParseRepository(args[0])
 
-///////////////////////
-// Start of commands //
-///////////////////////
+	packageName := ToPackageName(repository)
 
-func help() {
-	for _, props := range commandList {
-		print(prefix(0) + color.Green + strings.ToUpper(props.name) + GRAY + " - " + color.Reset + props.description)
-	}
-}
+	owner, name := SplitRepositoryID(repository)
 
-func exit() {
-	os.Exit(0)
-}
-
-func get() {
-	repo := args[0]
-	if !strings.Contains(repo, "/") {
-		repo := "noahonfyre/" + repo
-		fetchRepo(repo)
+	logging.Log("Checking package " + color.Green + repository + color.Reset + "...")
+	if !filesystem.Exists(pkgDir + "\\" + packageName + "\\") {
+		err := os.MkdirAll(pkgDir+"\\"+packageName+"\\", os.ModeDir)
+		if err != nil {
+			logging.Error("Failed to create local package folder:", err)
+			return
+		}
 	} else {
-		fetchRepo(repo)
+		logging.Error("Package already downloaded!")
+		return
 	}
-}
 
-func list() {
-	dir_content, err := os.ReadDir(package_dir)
-
+	_, directoryContent, response, err := gitHubClient.Repositories.GetContents(context.Background(), owner, name, "/", &github.RepositoryContentGetOptions{})
 	if err != nil {
-		print(prefix(2) + "The package directory couldn't be read.")
+		logging.Error("Failed to make request to GitHub API:", err)
+		return
 	}
 
-	for _, pkg := range dir_content {
-		if pkg.IsDir() {
-			pkg_info, err := pkg.Info()
+	logging.Log("Starting download of package " + color.Green + repository + color.Reset + " via " + color.Green + response.Proto)
+
+	var wg sync.WaitGroup
+	wg.Add(len(directoryContent))
+
+	logging.Log("Downloading... This may take a while.")
+
+	for _, fileProperties := range directoryContent {
+		go func(props *github.RepositoryContent) {
+			if *props.Type != "file" {
+				wg.Done()
+				return
+			}
+			file, _ := os.Create(pkgDir + "\\" + packageName + "\\" + *props.Name)
+
+			logging.Log("Fetching " + color.Green + *props.Name + "... " + color.Gray + "(" + strconv.Itoa(props.GetSize()) + " Bytes" + ")" + color.Gray + " - " + color.Green + response.Status)
+
+			res, err := http.Get(*props.DownloadURL)
+			if err != nil {
+				logging.Error("GET request failed: " + err.Error())
+				return
+			}
+
+			defer res.Body.Close()
+
+			body, err := io.ReadAll(res.Body)
 
 			if err != nil {
-				print(prefix(2) + "The file information couldn't be read.")
+				logging.Error("Reading body failed: " + err.Error())
+				return
 			}
-			print(prefix(0) + color.Green + strings.Replace(pkg.Name(), ".", "/", -1) + GRAY + " - " + color.Reset + strconv.Itoa(int(pkg_info.Size())) + " Bytes" + GRAY + " - " + color.Reset + pkg_info.ModTime().Format("15:04:05 - 02.01.2006"))
+
+			_, err = file.Write(body)
+			if err != nil {
+				logging.Error("Error while writing file: " + err.Error())
+				return
+			}
+			file.Close()
+			wg.Done()
+		}(fileProperties)
+	}
+	wg.Wait()
+
+	logging.Log("Successfully collected package " + color.Green + repository + color.Reset + "!")
+}
+
+func RemoveCommand(args []string) {
+	repository := ParseRepository(args[0])
+	packageName := ToPackageName(repository)
+
+	logging.Log("Removing package " + color.Green + repository + color.Reset + "...")
+
+	err := os.RemoveAll(pkgDir + "\\" + packageName)
+	if err != nil {
+		logging.Error("Failed to remove package:", err)
+		return
+	}
+
+	logging.Log("Successfully removed package from local storage!")
+}
+
+func HelpCommand(args []string) {
+	for _, props := range commands {
+		logging.Log(color.Green + strings.ToUpper(props.Name) + color.Green + " - " + color.Reset + props.Description)
+	}
+}
+
+func ListCommand(args []string) {
+	dirContent, err := os.ReadDir(pkgDir)
+
+	if err != nil {
+		logging.Error("The package directory couldn't be read.")
+	}
+
+	for _, pkg := range dirContent {
+		if pkg.IsDir() {
+			pkgInfo, err := pkg.Info()
+
+			if err != nil {
+				logging.Error("The file information couldn't be read.")
+			}
+			logging.Log(color.Green + strings.Replace(pkg.Name(), ".", "/", -1) + color.Gray + " - " + color.Reset + strconv.Itoa(int(pkgInfo.Size())) + " Bytes" + color.Gray + " - " + color.Reset + pkgInfo.ModTime().Format("15:04:05 - 02.01.2006"))
 		}
 	}
 }
 
-func remove() {
-	repo := args[0]
-	if !strings.Contains(repo, "/") {
-		repo := "NoahOnFyre/" + repo
-		os.RemoveAll(package_dir + "\\" + strings.Replace(repo, "/", ".", -1))
-	} else {
-		os.RemoveAll(package_dir + "\\" + strings.Replace(repo, "/", ".", -1))
-	}
-	print(prefix(0) + "Package successfully removed!")
-}
-
-func check() {
-	action := args[0]
-	rateLimit, response, _ := gitHubClient.RateLimits(context.Background())
-
-	switch action {
-	case "connection":
-		print(prefix(0) + "GitHub API returned: " + color.Green + response.Status + color.Reset + " over " + GRAY + response.Proto)
-
-	case "ratelimit":
-		print(prefix(0) + "Your current ratelimit: " + color.Green + strconv.Itoa(rateLimit.Core.Remaining) + "/" + strconv.Itoa(rateLimit.Core.Limit))
-
-	case "installation":
-		errors_found := 0
-		print(prefix(0) + "Checking your Nitro installation... This may take a while.")
-		print(prefix(0) + "Checking directories...")
-		errors_found += checkPaths([]string{
-			nitro_dir,
-			core_dir,
-			package_dir,
-			temp_dir,
-			plugin_dir,
-		})
-		print(prefix(0) + "Checking configuration files...")
-		print(prefix(0) + "Checking Go installation...")
-		if exists(user_dir + "\\go") {
-			print(prefix(0) + "Go is installed!")
-		} else {
-			print(prefix(2) + "Go is not installed!")
-			errors_found += 1
-		}
-		if errors_found == 0 {
-			print(prefix(0) + "Done! " + color.Green + strconv.Itoa(errors_found) + color.Reset + " errors found and fixed!")
-		} else {
-			print(prefix(1) + "Done! " + color.Green + strconv.Itoa(errors_found) + color.Reset + " errors found and fixed!")
-		}
-
-	default:
-		print(prefix(2) + "Not a recognized field!")
-	}
-}
-
-func clear() {
-	menu()
-}
-
-func run() {
-	manifest := getManifest(parseRepoName(args[0]))
-
-	if manifest.Build != "" {
-		exec.Command(manifest.Build).Run()
-	}
-
-	exec.Command("start", manifest.Main).Run()
-}
-
-func dir() {
-	exec.Command("start", "explorer.exe "+nitro_dir).Run()
+func ExitCommand(args []string) {
+	Exit(0)
 }
