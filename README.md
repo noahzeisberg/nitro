@@ -1,14 +1,8 @@
-# Nitro
-Nitro is a asyncronous CLI tool that fetches packages based on GitHub repositories using the GitHub API.
-It's currently only tested on Windows, so we can't ensure any features to work on other systems.
+# Nitro v1.1.X
+Install applications via your command prompt fast and with ease by utilizing the concurrency of golang.
 
 # How do I install it?
-Download the `Nitro-windows-amd64.exe` and the `setup.bat` file out of the [latest Release](https://github.com/NoahOnFyre/Nitro/). Open up a command prompt in your current directory and execute the following command.
-```
-setup
-```
-The setup will automatically start the Nitro CLI.
+Download the `nitro.exe` and the `setup.bat` file of the [latest Release](https://github.com/NoahOnFyre/Nitro/releases/latest) and run the setup file.
 
-# How do I use it?
-Open up a command prompt and run the `nitro` command to start the CLI.
-If you need help for the commands, try the `help` command.
+# How can I use it?
+Open your command prompt anywhere you like and run the `nitro` command to open the CLI. You can use the `help` command in Nitro to get an overview of the commands.

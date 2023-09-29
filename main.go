@@ -1,81 +1,83 @@
 package main
 
 import (
-	"bufio"
+	"github.com/NoahOnFyre/gengine/color"
+	"github.com/NoahOnFyre/gengine/convert"
+	"github.com/NoahOnFyre/gengine/filesystem"
+	"github.com/NoahOnFyre/gengine/logging"
+	"github.com/NoahOnFyre/gengine/utils"
+	"github.com/google/go-github/github"
 	"os"
-	"strconv"
-
-	"github.com/TwiN/go-color"
-	title "github.com/lxi1400/GoTitle"
+	"strings"
 )
-
-//////////////////////
-// Global variables //
-//////////////////////
 
 var (
-	scanner     = bufio.NewScanner(os.Stdin)
-	commandList []CommandProperties
-
-	user_dir    string = single(os.UserHomeDir())
-	nitro_dir   string = user_dir + "\\.nitro"
-	core_dir    string = nitro_dir + "\\core"
-	package_dir string = nitro_dir + "\\packages"
-	temp_dir    string = nitro_dir + "\\temp"
-	plugin_dir  string = core_dir + "\\plugins"
-
-	command string
-	args    []string
+	gitHubClient = github.NewClient(nil)
+	version      = "1.1.0"
+	userDir, _   = os.UserHomeDir()
+	nitroDir     = userDir + "\\.nitro\\"
+	pkgDir       = nitroDir + "packages"
+	commands     []Command
 )
 
-func menu() {
-	dir_content, err := os.ReadDir(package_dir)
+func main() {
+	logging.Log("Starting...")
+	logging.SetMainColor(color.GreenBg)
 
-	if err != nil {
-		print(prefix(2) + "The package directory couldn't be read.")
+	logging.Log("Checking paths...")
+	paths := []string{nitroDir, pkgDir}
+	for _, path := range paths {
+		if !filesystem.Exists(path) {
+			err := os.MkdirAll(path, os.ModeDir)
+			if err != nil {
+				logging.Error("Failed to create Nitro paths.")
+				Exit(1)
+			}
+		}
 	}
 
-	printR("\033[H\033[2J")
-	title.SetTitle("Nitro Package Manager - " + nitro_dir)
-	print(color.Green + "     _   __ _  __")
-	print(color.Green + "    / | / /(_)/ /_ _____ ____ ")
-	print(color.Green + "   /  |/ // // __// ___// __ \\" + GRAY + "   Version: " + color.Green + "1.0.0")
-	print(color.Green + "  / /|  // // /_ / /   / /_/ /" + GRAY + "   Packages: " + color.Green + strconv.Itoa(len(dir_content)))
-	print(color.Green + " /_/ |_//_/ \\__//_/    \\____/ " + GRAY + "   Made by: " + color.Green + "NoahOnFyre")
-}
+	packages, err := os.ReadDir(pkgDir)
+	if err != nil {
+		logging.Error("Failed to load packages in package directory!")
+		Exit(1)
+	}
 
-///////////////////
-// Main function //
-///////////////////
+	logging.Log("Registering commands...")
+	CommandRegistration()
 
-func main() {
-	initCommands()
+	logging.PrintR("\033[H\033[2J")
 
-	checkPaths([]string{
-		nitro_dir,
-		core_dir,
-		package_dir,
-		temp_dir,
-		plugin_dir,
-	})
+	utils.SetTitle("Nitro Package Manager - v" + version + " - " + nitroDir)
 
-	menu()
-	print("")
+	logging.Print(color.Green + "    _   __ _  __")
+	logging.Print(color.Green + "   / | / /(_)/ /_ _____ ____   ")
+	logging.Print(color.Green + "  /  |/ // // __// ___// __ \\  " + color.Gray + "Made by: " + color.Green + "NoahOnFyre")
+	logging.Print(color.Green + " / /|  // // /_ / /   / /_/ /  " + color.Gray + "Version: " + color.Green + version)
+	logging.Print(color.Green + "/_/ |_//_/ \\__//_/    \\____/   " + color.Gray + "Packages: " + color.Green + convert.FormatInt(len(packages)))
+	logging.Print(color.Green + "")
 
 	for {
-		command, args = commandInput()
-		print("")
+		raw := logging.Input(color.Gray + "\\\\" + color.Green + " nitro " + color.Gray + "~" + color.Reset + " ")
+		logging.Print()
 
-		for _, props := range commandList {
-			if props.name == command {
-				if len(args) == props.args {
-					props.run()
-					print("")
+		split := strings.Split(raw, " ")
+		command := split[0]
+		args := utils.RemoveElement(split, 0)
+
+		for _, props := range commands {
+			if props.Name == command {
+				if len(args) == props.Args.Count {
+					props.Run(args)
+					logging.Print()
 				} else {
-					print(prefix(2) + "Unexpected arguments!")
-					print("")
+					logging.Error("Unexpected arguments!")
+					logging.Print()
 				}
 			}
 		}
 	}
+}
+
+func Exit(code int) {
+	os.Exit(code)
 }
